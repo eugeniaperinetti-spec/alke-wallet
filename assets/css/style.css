@@ -1,0 +1,36 @@
+body {
+  background-color: #f4f7fb;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  max-width: 430px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+}
+
+.btn {
+  border-radius: 10px;
+}
+
+.form-control {
+  border-radius: 10px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.contact-item:hover {
+  background-color: #f1f5ff;
+}
