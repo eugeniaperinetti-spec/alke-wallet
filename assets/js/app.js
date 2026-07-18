@@ -1,281 +1,587 @@
-// ===============================
-// ALKE WALLET - JAVASCRIPT + JQUERY
-// ===============================
+// ========================================
+// CONFIGURACIÓN INICIAL
+// ========================================
 
-// Saldo inicial
-let balance = localStorage.getItem("balance")
-  ? parseInt(localStorage.getItem("balance"))
-  : 60000;
+const VALID_EMAIL = "usuario@alke.cl";
+const VALID_PASSWORD = "1234";
+const INITIAL_BALANCE = 80000;
 
-// Transacciones iniciales
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [
-  {
-    type: "Compra en línea",
-    amount: 500,
-    detail: "Pago realizado",
-    date: "Inicial"
-  },
-  {
-    type: "Depósito",
-    amount: 10000,
-    detail: "Depósito inicial",
-    date: "Inicial"
-  },
-  {
-    type: "Transferencia recibida",
-    amount: 7500,
-    detail: "Dinero recibido",
-    date: "Inicial"
-  }
+const defaultContacts = [
+    {
+        name: "María González",
+        alias: "maria.gonzalez",
+        bank: "Banco Estado",
+        cbu: "123456789"
+    },
+    {
+        name: "Juan Pérez",
+        alias: "juan.perez",
+        bank: "Banco de Chile",
+        cbu: "987654321"
+    },
+    {
+        name: "Carolina Soto",
+        alias: "carolina.soto",
+        bank: "Banco Santander",
+        cbu: "456789123"
+    }
 ];
 
-// Contactos iniciales
-let contacts = JSON.parse(localStorage.getItem("contacts")) || [
-  {
-    name: "John Doe",
-    cbu: "123456789",
-    alias: "john.doe",
-    bank: "ABC Bank"
-  },
-  {
-    name: "Jane Smith",
-    cbu: "987654321",
-    alias: "jane.smith",
-    bank: "XYZ Bank"
-  }
-];
 
-// Guardar datos en navegador
+// ========================================
+// OBTENER DATOS DE LOCALSTORAGE
+// ========================================
+
+function getStoredArray(key, defaultValue) {
+    try {
+        const storedValue = localStorage.getItem(key);
+
+        if (!storedValue) {
+            return defaultValue;
+        }
+
+        const parsedValue = JSON.parse(storedValue);
+
+        return Array.isArray(parsedValue)
+            ? parsedValue
+            : defaultValue;
+
+    } catch (error) {
+        console.error(`Error al recuperar ${key}:`, error);
+        return defaultValue;
+    }
+}
+
+
+let balance = Number(localStorage.getItem("balance"));
+
+if (!Number.isFinite(balance)) {
+    balance = INITIAL_BALANCE;
+}
+
+let contacts = getStoredArray(
+    "contacts",
+    defaultContacts
+);
+
+let transactions = getStoredArray(
+    "transactions",
+    []
+);
+
+
+// ========================================
+// FUNCIONES GENERALES
+// ========================================
+
 function saveData() {
-  localStorage.setItem("balance", balance);
-  localStorage.setItem("transactions", JSON.stringify(transactions));
-  localStorage.setItem("contacts", JSON.stringify(contacts));
+    localStorage.setItem(
+        "balance",
+        balance.toString()
+    );
+
+    localStorage.setItem(
+        "contacts",
+        JSON.stringify(contacts)
+    );
+
+    localStorage.setItem(
+        "transactions",
+        JSON.stringify(transactions)
+    );
 }
 
-// Formatear dinero
-function formatMoney(amount) {
-  return "$" + amount.toLocaleString("es-CL");
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat(
+        "es-CL",
+        {
+            style: "currency",
+            currency: "CLP",
+            maximumFractionDigits: 0
+        }
+    ).format(amount);
 }
 
-// Actualizar saldo en cualquier pantalla
-function updateBalanceView() {
-  const balanceElement = document.getElementById("balance");
 
-  if (balanceElement) {
-    balanceElement.textContent = formatMoney(balance);
-  }
+function escapeHtml(value) {
+    return $("<div>")
+        .text(value)
+        .html();
 }
 
-// Mostrar mensajes con Bootstrap
+
 function showMessage(message, type = "success") {
-  const messageBox = document.getElementById("message");
+    const messageContainer = $("#message");
 
-  if (!messageBox) return;
+    if (!messageContainer.length) {
+        return;
+    }
 
-  messageBox.innerHTML = `
-    <div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
-      ${message}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  `;
+    messageContainer
+        .stop(true, true)
+        .hide()
+        .html(`
+            <div class="alert alert-${type}" role="alert">
+                ${escapeHtml(message)}
+            </div>
+        `)
+        .fadeIn(300);
 }
 
-// Registrar transacción
-function addTransaction(type, amount, detail) {
-  const newTransaction = {
-    type: type,
-    amount: amount,
-    detail: detail,
-    date: new Date().toLocaleDateString("es-CL")
-  };
 
-  transactions.unshift(newTransaction);
-  saveData();
+function updateBalanceView() {
+    $("#balance").text(
+        formatCurrency(balance)
+    );
 }
 
-// Login
+
+// ========================================
+// LOGIN
+// ========================================
+
 function loginUser(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const email = $("#email").val();
-  const password = $("#password").val();
+    const email = $("#email")
+        .val()
+        .trim();
 
-  if (email === "usuario@alke.cl" && password === "1234") {
-    localStorage.setItem("loggedUser", "true");
-    window.location.href = "menu.html";
-  } else {
-    showMessage("Correo o contraseña incorrectos. Usa usuario@alke.cl / 1234", "danger");
-  }
+    const password = $("#password")
+        .val()
+        .trim();
+
+    if (email === "" || password === "") {
+        showMessage(
+            "Debes completar el correo y la contraseña.",
+            "danger"
+        );
+
+        return;
+    }
+
+    if (
+        email === VALID_EMAIL &&
+        password === VALID_PASSWORD
+    ) {
+        localStorage.setItem(
+            "loggedUser",
+            "true"
+        );
+
+        window.location.href = "menu.html";
+
+    } else {
+        showMessage(
+            "Correo o contraseña incorrectos.",
+            "danger"
+        );
+    }
 }
 
-// Depósito
+
+// ========================================
+// DEPÓSITOS
+// ========================================
+
 function depositMoney(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const amount = parseInt($("#depositAmount").val());
+    const depositAmount = Number(
+        $("#depositAmount").val()
+    );
 
-  if (isNaN(amount) || amount <= 0) {
-    showMessage("Ingresa un monto válido para depositar.", "danger");
-    return;
-  }
+    if (
+        !Number.isFinite(depositAmount) ||
+        depositAmount <= 0
+    ) {
+        showMessage(
+            "Ingresa un monto válido mayor que cero.",
+            "danger"
+        );
 
-  balance += amount;
+        return;
+    }
 
-  addTransaction(
-    "Depósito",
-    amount,
-    "Depósito realizado desde la cuenta principal"
-  );
+    balance += depositAmount;
 
-  updateBalanceView();
-  $("#depositAmount").val("");
+    transactions.push({
+        type: "income",
+        description: "Depósito de fondos",
+        amount: depositAmount,
+        date: new Date().toLocaleString("es-CL")
+    });
 
-  showMessage("Depósito realizado correctamente.", "success");
+    saveData();
+    updateBalanceView();
+    renderTransactions();
+
+    $("#depositAmount").val("");
+
+    showMessage(
+        `Depósito de ${formatCurrency(depositAmount)} realizado correctamente.`,
+        "success"
+    );
 }
 
-// Mostrar contactos
-function renderContacts(filter = "") {
-  const contactList = $("#contactList");
 
-  if (!contactList.length) return;
+// ========================================
+// TRANSFERENCIAS
+// ========================================
 
-  contactList.empty();
-
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()) ||
-    contact.alias.toLowerCase().includes(filter.toLowerCase()) ||
-    contact.bank.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  if (filteredContacts.length === 0) {
-    contactList.append(`
-      <li class="list-group-item text-muted">
-        No se encontraron contactos.
-      </li>
-    `);
-    return;
-  }
-
-  filteredContacts.forEach(contact => {
-    contactList.append(`
-      <li class="list-group-item contact-item" data-name="${contact.name}">
-        <div class="contact-info">
-          <strong class="contact-name">${contact.name}</strong><br>
-          <small>CBU: ${contact.cbu}, Alias: ${contact.alias}, Banco: ${contact.bank}</small>
-        </div>
-      </li>
-    `);
-  });
-}
-
-// Enviar dinero
 function sendMoney(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const contactName = $("#searchContact").val();
-  const amount = parseInt($("#sendAmount").val());
+    const contactSearch = $("#searchContact")
+        .val()
+        .trim();
 
-  if (contactName.trim() === "") {
-    showMessage("Debes seleccionar o escribir un contacto.", "danger");
-    return;
-  }
+    const sendAmount = Number(
+        $("#sendAmount").val()
+    );
 
-  if (isNaN(amount) || amount <= 0) {
-    showMessage("Ingresa un monto válido para transferir.", "danger");
-    return;
-  }
+    if (contactSearch === "") {
+        showMessage(
+            "Debes seleccionar un contacto.",
+            "danger"
+        );
 
-  if (amount > balance) {
-    showMessage("Saldo insuficiente para realizar la transferencia.", "danger");
-    return;
-  }
+        return;
+    }
 
-  balance -= amount;
+    const selectedContact = contacts.find(contact => {
+        const searchText = contactSearch.toLowerCase();
 
-  addTransaction(
-    "Transferencia enviada",
-    amount,
-    "Transferencia enviada a " + contactName
-  );
+        return (
+            contact.name.toLowerCase() === searchText ||
+            contact.alias.toLowerCase() === searchText
+        );
+    });
 
-  updateBalanceView();
+    if (!selectedContact) {
+        showMessage(
+            "El contacto seleccionado no existe.",
+            "danger"
+        );
 
-  $("#searchContact").val("");
-  $("#sendAmount").val("");
+        return;
+    }
 
-  showMessage("Transferencia realizada correctamente.", "success");
+    if (
+        !Number.isFinite(sendAmount) ||
+        sendAmount <= 0
+    ) {
+        showMessage(
+            "Ingresa un monto válido mayor que cero.",
+            "danger"
+        );
+
+        return;
+    }
+
+    if (sendAmount > balance) {
+        showMessage(
+            "No tienes saldo suficiente para realizar esta transferencia.",
+            "danger"
+        );
+
+        return;
+    }
+
+    const confirmed = window.confirm(
+        `¿Confirmas la transferencia de ${formatCurrency(sendAmount)} a ${selectedContact.name}?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    balance -= sendAmount;
+
+    transactions.push({
+        type: "expense",
+        description: `Transferencia a ${selectedContact.name}`,
+        amount: sendAmount,
+        date: new Date().toLocaleString("es-CL")
+    });
+
+    saveData();
+    updateBalanceView();
+    renderTransactions();
+
+    $("#searchContact").val("");
+    $("#sendAmount").val("");
+
+    renderContacts();
+
+    showMessage(
+        "Transferencia realizada correctamente.",
+        "success"
+    );
 }
 
-// Agregar contacto simple
-function addNewContact() {
-  const contactName = $("#searchContact").val();
 
-  if (contactName.trim() === "") {
-    showMessage("Escribe el nombre del nuevo contacto.", "danger");
-    return;
-  }
+// ========================================
+// AGREGAR CONTACTOS
+// ========================================
 
-  const exists = contacts.some(contact =>
-    contact.name.toLowerCase() === contactName.toLowerCase()
-  );
+function addNewContact(event) {
+    event.preventDefault();
 
-  if (exists) {
-    showMessage("Este contacto ya existe.", "warning");
-    return;
-  }
+    const contactName = $("#contactName")
+        .val()
+        .trim();
 
-  const newContact = {
-    name: contactName,
-    cbu: "000000000",
-    alias: contactName.toLowerCase().replaceAll(" ", "."),
-    bank: "Banco Demo"
-  };
+    const contactAlias = $("#contactAlias")
+        .val()
+        .trim();
 
-  contacts.push(newContact);
-  saveData();
-  renderContacts();
+    const contactBank = $("#contactBank")
+        .val()
+        .trim();
 
-  showMessage("Contacto agregado correctamente.", "success");
+    const contactAccount = $("#contactAccount")
+        .val()
+        .trim();
+
+    const contactMessage = $("#contactMessage");
+
+    contactMessage.empty();
+
+    if (
+        contactName === "" ||
+        contactAlias === "" ||
+        contactBank === "" ||
+        contactAccount === ""
+    ) {
+        contactMessage.html(`
+            <div class="alert alert-danger" role="alert">
+                Debes completar todos los datos del contacto.
+            </div>
+        `);
+
+        return;
+    }
+
+    if (!/^\d+$/.test(contactAccount)) {
+        contactMessage.html(`
+            <div class="alert alert-danger" role="alert">
+                El número de cuenta debe contener solamente números.
+            </div>
+        `);
+
+        return;
+    }
+
+    const contactExists = contacts.some(contact => {
+        return (
+            contact.name.toLowerCase() ===
+                contactName.toLowerCase() ||
+
+            contact.alias.toLowerCase() ===
+                contactAlias.toLowerCase() ||
+
+            contact.cbu === contactAccount
+        );
+    });
+
+    if (contactExists) {
+        contactMessage.html(`
+            <div class="alert alert-warning" role="alert">
+                Ya existe un contacto con ese nombre, alias o número de cuenta.
+            </div>
+        `);
+
+        return;
+    }
+
+    const newContact = {
+        name: contactName,
+        alias: contactAlias,
+        bank: contactBank,
+        cbu: contactAccount
+    };
+
+    contacts.push(newContact);
+
+    saveData();
+    renderContacts();
+
+    $("#searchContact").val(contactName);
+
+    $("#contactForm")[0].reset();
+
+    $("#contactModal").modal("hide");
+
+    showMessage(
+        "Contacto agregado correctamente.",
+        "success"
+    );
 }
 
-// Mostrar transacciones
+
+// ========================================
+// MOSTRAR CONTACTOS
+// ========================================
+
+function renderContacts(searchText = "") {
+    const contactList = $("#contactList");
+
+    if (!contactList.length) {
+        return;
+    }
+
+    contactList.empty();
+
+    const normalizedSearch = searchText
+        .trim()
+        .toLowerCase();
+
+    const filteredContacts = contacts.filter(contact => {
+        return (
+            contact.name
+                .toLowerCase()
+                .includes(normalizedSearch) ||
+
+            contact.alias
+                .toLowerCase()
+                .includes(normalizedSearch) ||
+
+            contact.bank
+                .toLowerCase()
+                .includes(normalizedSearch)
+        );
+    });
+
+    if (filteredContacts.length === 0) {
+        contactList.append(`
+            <li class="list-group-item text-muted">
+                No se encontraron contactos.
+            </li>
+        `);
+
+        return;
+    }
+
+    filteredContacts.forEach(contact => {
+        contactList.append(`
+            <li
+                class="list-group-item contact-item"
+                data-name="${escapeHtml(contact.name)}"
+            >
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>
+                            ${escapeHtml(contact.name)}
+                        </strong>
+
+                        <div class="small text-muted">
+                            ${escapeHtml(contact.alias)}
+                        </div>
+
+                        <div class="small">
+                            ${escapeHtml(contact.bank)}
+                        </div>
+
+                        <div class="small">
+                            Cuenta: ${escapeHtml(contact.cbu)}
+                        </div>
+                    </div>
+
+                    <span class="badge badge-primary">
+                        Seleccionar
+                    </span>
+                </div>
+            </li>
+        `);
+    });
+}
+
+
+// ========================================
+// MOSTRAR TRANSACCIONES
+// ========================================
+
 function renderTransactions() {
-  const transactionList = $("#transactionList");
+    const transactionList = $("#transactionList");
 
-  if (!transactionList.length) return;
+    if (!transactionList.length) {
+        return;
+    }
 
-  transactionList.empty();
+    transactionList.empty();
 
-  transactions.forEach(transaction => {
-    const isPositive =
-      transaction.type === "Depósito" ||
-      transaction.type === "Transferencia recibida";
+    if (transactions.length === 0) {
+        transactionList.append(`
+            <li class="list-group-item text-muted text-center">
+                No hay movimientos registrados.
+            </li>
+        `);
 
-    const sign = isPositive ? "+" : "-";
-    const textClass = isPositive ? "text-success" : "text-danger";
+        return;
+    }
 
-    transactionList.append(`
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong>${transaction.type}</strong><br>
-          <small class="text-muted">${transaction.detail} - ${transaction.date}</small>
-        </div>
-        <span class="${textClass}">
-          ${sign}${formatMoney(transaction.amount)}
-        </span>
-      </li>
-    `);
-  });
+    [...transactions]
+        .reverse()
+        .forEach(transaction => {
+
+            const isIncome =
+                transaction.type === "income";
+
+            const transactionClass = isIncome
+                ? "transaction-income"
+                : "transaction-expense";
+
+            const amountClass = isIncome
+                ? "text-success"
+                : "text-danger";
+
+            const sign = isIncome
+                ? "+"
+                : "-";
+
+            transactionList.append(`
+                <li class="list-group-item ${transactionClass}">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <strong>
+                                ${escapeHtml(transaction.description)}
+                            </strong>
+
+                            <div class="small text-muted">
+                                ${escapeHtml(transaction.date)}
+                            </div>
+                        </div>
+
+                        <span class="${amountClass} font-weight-bold">
+                            ${sign}${formatCurrency(transaction.amount)}
+                        </span>
+
+                    </div>
+
+                </li>
+            `);
+        });
 }
 
-// Obtener el nombre de la página actual
+
+// ========================================
+// PROTECCIÓN Y CIERRE DE SESIÓN
+// ========================================
+
 function getCurrentPage() {
-    return window.location.pathname.split("/").pop() || "index.html";
+    return (
+        window.location.pathname
+            .split("/")
+            .pop() ||
+        "index.html"
+    );
 }
 
-// Proteger las páginas privadas
+
 function protectPrivatePages() {
     const privatePages = [
         "menu.html",
@@ -285,53 +591,89 @@ function protectPrivatePages() {
     ];
 
     const currentPage = getCurrentPage();
-    const loggedUser = localStorage.getItem("loggedUser");
 
-    if (privatePages.includes(currentPage) && !loggedUser) {
+    const loggedUser =
+        localStorage.getItem("loggedUser");
+
+    if (
+        privatePages.includes(currentPage) &&
+        loggedUser !== "true"
+    ) {
         window.location.href = "login.html";
     }
 }
 
-// Cerrar la sesión
+
 function logoutUser(event) {
     event.preventDefault();
 
     localStorage.removeItem("loggedUser");
+
     window.location.href = "login.html";
 }
 
-// Cuando carga la página
+
+// ========================================
+// EVENTOS CUANDO CARGA LA PÁGINA
+// ========================================
+
 $(document).ready(function () {
 
     protectPrivatePages();
 
-  updateBalanceView();
-  renderContacts();
-  renderTransactions();
+    updateBalanceView();
+    renderContacts();
+    renderTransactions();
 
-  // Login
-  $("#loginForm").on("submit", loginUser);
+    $("#loginForm")
+        .on("submit", loginUser);
 
-  // Depósito
-  $("#depositForm").on("submit", depositMoney);
+    $("#depositForm")
+        .on("submit", depositMoney);
 
-  // Enviar dinero
-  $("#sendMoneyForm").on("submit", sendMoney);
+    $("#sendMoneyForm")
+        .on("submit", sendMoney);
 
-  // Agregar contacto
-  $("#addContactBtn").on("click", addNewContact);
+    $("#contactForm")
+        .on("submit", addNewContact);
 
-  // Buscar contacto con jQuery
-  $("#searchContact").on("input", function () {
-    const searchText = $(this).val();
-    renderContacts(searchText);
-  });
+    $("#searchContact")
+        .on("input", function () {
 
-  // Seleccionar contacto desde la lista
-  $(document).on("click", ".contact-item", function () {
-    const selectedName = $(this).data("name");
-    $("#searchContact").val(selectedName);
-  });
-   // Cerrar sesión
-    $("#logoutBtn").on("click", logoutUser);
+            const searchText =
+                $(this).val();
+
+            renderContacts(searchText);
+        });
+
+    $(document)
+        .on(
+            "click",
+            ".contact-item",
+            function () {
+
+                const selectedName =
+                    $(this).data("name");
+
+                $("#searchContact")
+                    .val(selectedName);
+
+                showMessage(
+                    `Contacto seleccionado: ${selectedName}`,
+                    "info"
+                );
+            }
+        );
+
+    $("#contactModal")
+        .on("show.bs.modal", function () {
+
+            $("#contactMessage").empty();
+
+            $("#contactForm")[0]?.reset();
+        });
+
+    $("#logoutBtn")
+        .on("click", logoutUser);
+
 });
