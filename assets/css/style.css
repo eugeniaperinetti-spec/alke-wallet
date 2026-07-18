@@ -1,36 +1,312 @@
-body {
-  background-color: #f4f7fb;
-  padding: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+/* ==============================
+   VARIABLES GENERALES
+============================== */
+
+:root {
+    --color-primary: #2457c5;
+    --color-primary-dark: #173a85;
+    --color-secondary: #6c757d;
+    --color-success: #198754;
+    --color-danger: #dc3545;
+    --color-info: #0d6efd;
+    --color-background: #f4f7fb;
+    --color-surface: #ffffff;
+    --color-text: #1f2937;
+    --color-muted: #6b7280;
+    --color-border: #dce3ec;
+    --shadow-card: 0 10px 30px rgba(31, 41, 55, 0.12);
 }
 
-.container {
-  max-width: 430px;
-  margin: 40px auto;
-  background-color: #ffffff;
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+/* ==============================
+   ESTILOS GENERALES
+============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 h1,
 h2,
-h3 {
-  font-weight: 700;
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-text);
 }
 
-.btn {
-  border-radius: 10px;
+a {
+    transition: opacity 0.2s ease;
 }
+
+a:hover {
+    text-decoration: none;
+}
+
+
+/* ==============================
+   BARRA DE NAVEGACIÓN
+============================== */
+
+.navbar {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+    color: #ffffff;
+}
+
+
+/* ==============================
+   TARJETAS
+============================== */
+
+.card {
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background-color: var(--color-surface);
+}
+
+.card.shadow,
+.card.shadow-sm {
+    box-shadow: var(--shadow-card) !important;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+
+/* ==============================
+   SALDO
+============================== */
+
+#balance {
+    color: var(--color-primary-dark) !important;
+    word-break: break-word;
+}
+
+
+/* ==============================
+   FORMULARIOS
+============================== */
 
 .form-control {
-  border-radius: 10px;
+    min-height: 46px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(36, 87, 197, 0.2);
+}
+
+label {
+    font-weight: 600;
+}
+
+.form-text {
+    color: var(--color-muted);
+}
+
+
+/* ==============================
+   BOTONES
+============================== */
+
+.btn {
+    min-height: 44px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.14);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+
+/* ==============================
+   MENSAJES
+============================== */
+
+#message:empty {
+    display: none;
+}
+
+#message {
+    border-radius: 8px;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+
+/* ==============================
+   CONTACTOS Y MOVIMIENTOS
+============================== */
+
+.list-group {
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .list-group-item {
-  cursor: pointer;
+    border-color: var(--color-border);
+    padding: 1rem;
+}
+
+.contact-item {
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .contact-item:hover {
-  background-color: #f1f5ff;
+    background-color: #eef4ff;
+    transform: translateX(3px);
+}
+
+.transaction-income {
+    border-left: 5px solid var(--color-success);
+}
+
+.transaction-expense {
+    border-left: 5px solid var(--color-danger);
+}
+
+
+/* ==============================
+   PIE DE PÁGINA
+============================== */
+
+footer {
+    color: var(--color-muted);
+}
+
+
+/* ==============================
+   ACCESIBILIDAD
+============================== */
+
+a:focus,
+button:focus,
+input:focus {
+    outline: 3px solid rgba(36, 87, 197, 0.25);
+    outline-offset: 2px;
+}
+
+
+/* ==============================
+   DISEÑO RESPONSIVE
+============================== */
+
+@media (max-width: 767px) {
+    main.container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .display-4 {
+        font-size: 2.4rem;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    .navbar-nav {
+        padding-top: 1rem;
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+        padding: 0.75rem 0;
+    }
+}
+
+@media (max-width: 575px) {
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    footer {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
