@@ -1,52 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Wallet - Enviar Dinero</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <style>
-    body {
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
 
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-  </style>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Enviar dinero | Alke Wallet</title>
+
+    <!-- Bootstrap -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    >
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/style.css">
+
 <body>
-  <div class="container">
-    <h2>Enviar Dinero</h2>
-    <form>
-      <div class="form-group">
-        <label for="searchContact">Buscar en la agenda de transferencias:</label>
-        <input type="text" class="form-control" id="searchContact" placeholder="Search contact">
-      </div>
-      <button type="submit" class="btn btn-primary">Agregar nuevo contacto</button>
- <h3>Contactos</h3>
-  <ul id="contactList" class="list-group">
-    <li class="list-group-item">
-      <div class="contact-info">
-        <span class="contact-name">Rafaella Escudero</span>
-        <span class="contact-details">CBU: 123456789, Alias: Rafaella Escudero, Banco: Santander Bank</span>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <div class="contact-info">
-        <span class="contact-name">Mauge Perinetti</span>
-        <span class="contact-details">CBU: 987654321, Alias: Mauge Perinetti, Banco: Mach Bank</span>
-      </div>
-    </li>
-      <button type="submit" class="btn btn-primary">Enviar dinero</button>
-    </form>
-    <a href="menu.html" class="btn btn-secondary">Volver al Menú Principal</a>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/app.js"></script>
+
+    <header>
+        <nav class="navbar navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="menu.html">
+                    Alke Wallet
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <div class="row justify-content-center mt-5">
+
+            <div class="col-12 col-md-9 col-lg-7">
+
+                <section class="card shadow">
+
+                    <div class="card-body">
+
+                        <h1 class="h3 text-center mb-4">
+                            Enviar dinero
+                        </h1>
+
+                        <div class="text-center mb-4">
+
+                            <p class="mb-1">
+                                Saldo disponible
+                            </p>
+
+                            <p
+                                id="balance"
+                                class="h2 font-weight-bold text-primary"
+                            >
+                                $0
+                            </p>
+
+                        </div>
+
+                        <div
+                            id="message"
+                            class="mb-3"
+                            aria-live="polite"
+                        ></div>
+
+                        <form id="sendMoneyForm">
+
+                            <div class="form-group">
+
+                                <label for="searchContact">
+                                    Buscar o seleccionar contacto
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="searchContact"
+                                    class="form-control"
+                                    placeholder="Nombre, alias o banco"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <small class="form-text text-muted">
+                                    También puedes escribir un nombre para agregar un contacto nuevo.
+                                </small>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                id="addContactBtn"
+                                class="btn btn-outline-primary btn-block mb-4"
+                            >
+                                Agregar nuevo contacto
+                            </button>
+
+                            <section aria-labelledby="titulo-contactos">
+
+                                <h2
+                                    id="titulo-contactos"
+                                    class="h5"
+                                >
+                                    Contactos guardados
+                                </h2>
+
+                                <ul
+                                    id="contactList"
+                                    class="list-group mb-4"
+                                ></ul>
+
+                            </section>
+
+                            <div class="form-group">
+
+                                <label for="sendAmount">
+                                    Monto a transferir
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="sendAmount"
+                                    class="form-control"
+                                    placeholder="Ejemplo: 5000"
+                                    min="1"
+                                    step="1"
+                                    required
+                                >
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                            >
+                                Enviar dinero
+                            </button>
+
+                        </form>
+
+                        <a
+                            href="menu.html"
+                            class="btn btn-outline-secondary btn-block mt-3"
+                        >
+                            Volver al menú
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="text-center mt-5 mb-3">
+        <small>Alke Wallet - Billetera digital</small>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- JavaScript de Bootstrap -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <!-- JavaScript propio -->
+    <script src="assets/js/app.js"></script>
+
 </body>
 </html>
