@@ -270,8 +270,41 @@ function renderTransactions() {
   });
 }
 
+// Obtener el nombre de la página actual
+function getCurrentPage() {
+    return window.location.pathname.split("/").pop() || "index.html";
+}
+
+// Proteger las páginas privadas
+function protectPrivatePages() {
+    const privatePages = [
+        "menu.html",
+        "deposit.html",
+        "sendmoney.html",
+        "transactions.html"
+    ];
+
+    const currentPage = getCurrentPage();
+    const loggedUser = localStorage.getItem("loggedUser");
+
+    if (privatePages.includes(currentPage) && !loggedUser) {
+        window.location.href = "login.html";
+    }
+}
+
+// Cerrar la sesión
+function logoutUser(event) {
+    event.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+    window.location.href = "login.html";
+}
+
 // Cuando carga la página
 $(document).ready(function () {
+
+    protectPrivatePages();
+
   updateBalanceView();
   renderContacts();
   renderTransactions();
@@ -299,4 +332,6 @@ $(document).ready(function () {
     const selectedName = $(this).data("name");
     $("#searchContact").val(selectedName);
   });
+   // Cerrar sesión
+    $("#logoutBtn").on("click", logoutUser);
 });

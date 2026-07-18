@@ -1,36 +1,232 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/style.css">
-  <title>Wallet - Menú Principal</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <style>
-    body {
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
 
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-  </style>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Menú principal | Alke Wallet</title>
+
+    <!-- Bootstrap -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    >
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-  <div class="container">
-    <h2>Menú Principal</h2>
-    <div class="form-group">
-  <label>Dinero en cuenta:</label>
-  <h3 id="balance">$80.000</h3>
-</div>
-    <a href="deposit.html" class="btn btn-primary btn-block mb-2">Depositar</a>
-<a href="sendmoney.html" class="btn btn-primary btn-block mb-2">Enviar Dinero</a>
-<a href="transactions.html" class="btn btn-primary btn-block mb-2">Últimos Movimientos</a>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/app.js"></script>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="menu.html">
+                    Alke Wallet
+                </a>
+
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#menuNavegacion"
+                    aria-controls="menuNavegacion"
+                    aria-expanded="false"
+                    aria-label="Abrir menú de navegación"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div
+                    class="collapse navbar-collapse"
+                    id="menuNavegacion"
+                >
+
+                    <ul class="navbar-nav ml-auto">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="deposit.html">
+                                Depositar
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="sendmoney.html">
+                                Enviar dinero
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="transactions.html">
+                                Movimientos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="login.html"
+                                id="logoutBtn"
+                            >
+                                Cerrar sesión
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="container py-5">
+
+        <section class="text-center mb-5">
+
+            <h1>Menú principal</h1>
+
+            <p class="lead">
+                Administra tus fondos desde Alke Wallet.
+            </p>
+
+        </section>
+
+        <section class="row justify-content-center mb-4">
+
+            <article class="col-12 col-md-8 col-lg-6">
+
+                <div class="card shadow text-center">
+
+                    <div class="card-body">
+
+                        <h2 class="h5">
+                            Saldo disponible
+                        </h2>
+
+                        <p
+                            id="balance"
+                            class="display-4 font-weight-bold text-primary"
+                        >
+                            $0
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+        <section class="row">
+
+            <article class="col-12 col-md-4 mb-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <h2 class="h4">
+                            Depositar fondos
+                        </h2>
+
+                        <p>
+                            Aumenta el saldo disponible de tu billetera.
+                        </p>
+
+                        <a
+                            href="deposit.html"
+                            class="btn btn-success btn-block"
+                        >
+                            Depositar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            <article class="col-12 col-md-4 mb-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <h2 class="h4">
+                            Enviar dinero
+                        </h2>
+
+                        <p>
+                            Transfiere fondos a tus contactos guardados.
+                        </p>
+
+                        <a
+                            href="sendmoney.html"
+                            class="btn btn-primary btn-block"
+                        >
+                            Transferir
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            <article class="col-12 col-md-4 mb-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <h2 class="h4">
+                            Últimos movimientos
+                        </h2>
+
+                        <p>
+                            Revisa los depósitos y transferencias realizadas.
+                        </p>
+
+                        <a
+                            href="transactions.html"
+                            class="btn btn-info btn-block"
+                        >
+                            Ver movimientos
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+    <footer class="text-center py-4">
+        <small>Alke Wallet - Billetera digital</small>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- JavaScript de Bootstrap -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <!-- JavaScript propio -->
+    <script src="assets/js/app.js"></script>
+
 </body>
 </html>
